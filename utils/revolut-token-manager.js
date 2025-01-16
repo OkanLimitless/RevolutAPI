@@ -6,7 +6,7 @@ class TokenManager {
         this.tokens = {
             access_token: process.env.REVOLUT_ACCESS_TOKEN || null,
             refresh_token: process.env.REVOLUT_REFRESH_TOKEN || null,
-            expires_at: process.env.REVOLUT_TOKEN_EXPIRES || null
+            expires_at: process.env.REVOLUT_TOKEN_EXPIRES ? parseInt(process.env.REVOLUT_TOKEN_EXPIRES) : null
         };
     }
 
@@ -32,7 +32,13 @@ class TokenManager {
 
         // Check if token is expired or about to expire (within 5 minutes)
         if (Date.now() >= this.tokens.expires_at - 300000) {
-            await this.refreshToken();
+            console.log('Token expired or about to expire, refreshing...');
+            try {
+                await this.refreshToken();
+            } catch (error) {
+                console.error('Token refresh failed:', error);
+                throw new Error('Token refresh failed');
+            }
         }
 
         return this.tokens.access_token;
