@@ -12,7 +12,7 @@ export function generateJWT() {
             exp: now + 60 * 5,
             iat: now,
             jti,
-            scope: 'READ,WRITE'
+            scope: 'READ,WRITE,PAY'
         };
 
         const privateKey = process.env.REVOLUT_PRIVATE_KEY
