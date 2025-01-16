@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { name, spendingLimit = 1000 } = req.body;
+        const { name, spendingLimit = 90 } = req.body;
 
         if (!name) {
             return res.status(400).json({
@@ -17,27 +17,32 @@ export default async function handler(req, res) {
 
         const client = await createRevolutClient();
 
-        // Create a virtual card
-        const cardResponse = await client.post('/cards', {
-            type: 'VIRTUAL',
-            name: name
+        // First, check if we can create cards
+        const cardsResponse = await client.get('/cards');
+        console.log('Cards API response:', {
+            status: cardsResponse.status,
+            data: cardsResponse.data
         });
 
-        // Set spending limit if specified
-        if (spendingLimit) {
-            await client.post(`/cards/${cardResponse.data.id}/spending-limits`, {
-                amount: spendingLimit,
+        // Create a virtual card with updated payload
+        const cardResponse = await client.post('/issuing/cards', {
+            type: 'VIRTUAL',
+            profile: 'DEFAULT',
+            currency: 'EUR',
+            card_name: name,
+            spending_limits: [{
+                amount: spendingLimit * 100,
                 currency: 'EUR',
                 frequency: 'MONTHLY'
-            });
-        }
+            }]
+        });
 
         res.status(200).json({
             status: 'success',
             message: 'Virtual card created',
             card: {
                 id: cardResponse.data.id,
-                name: cardResponse.data.name,
+                name: cardResponse.data.card_name,
                 last4: cardResponse.data.last4,
                 spendingLimit: {
                     amount: spendingLimit,
@@ -48,7 +53,17 @@ export default async function handler(req, res) {
         });
 
     } catch (error) {
-        console.error('Card creation error:', error.response?.data || error);
+        console.error('Card creation error:', {
+            error: error.response?.data || error,
+            status: error.response?.status,
+            headers: error.response?.headers,
+            request: {
+                url: error.config?.url,
+                method: error.config?.method,
+                data: error.config?.data
+            }
+        });
+        
         res.status(500).json({
             status: 'error',
             message: 'Failed to create virtual card',
