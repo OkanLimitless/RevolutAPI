@@ -23,6 +23,12 @@ class TokenManager {
             }
         } catch (error) {
             console.error('Error loading tokens:', error);
+            // Initialize with empty tokens if file read fails
+            this.tokens = {
+                access_token: null,
+                refresh_token: null,
+                expires_at: null
+            };
         }
     }
 
@@ -60,7 +66,6 @@ class TokenManager {
     async refreshToken() {
         try {
             const token = generateJWT();
-            
             const formData = new URLSearchParams();
             formData.append('grant_type', 'refresh_token');
             formData.append('refresh_token', this.tokens.refresh_token);
