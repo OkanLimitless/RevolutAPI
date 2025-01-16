@@ -58,7 +58,10 @@ export default async function handler(req, res) {
                     response.data.refresh_token,
                     response.data.expires_in
                 );
-                console.log('Access token received and stored');
+                console.log('Access token received. Please add these to your Vercel environment variables:');
+                console.log('REVOLUT_ACCESS_TOKEN:', response.data.access_token);
+                console.log('REVOLUT_REFRESH_TOKEN:', response.data.refresh_token);
+                console.log('REVOLUT_TOKEN_EXPIRES:', Date.now() + (response.data.expires_in * 1000));
             }
 
             res.status(200).json({

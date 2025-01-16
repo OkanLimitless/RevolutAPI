@@ -1,44 +1,13 @@
-import fs from 'fs';
-import path from 'path';
 import axios from 'axios';
 import { generateJWT } from './revolut-auth';
 
 class TokenManager {
     constructor() {
         this.tokens = {
-            access_token: null,
-            refresh_token: null,
-            expires_at: null
+            access_token: process.env.REVOLUT_ACCESS_TOKEN || null,
+            refresh_token: process.env.REVOLUT_REFRESH_TOKEN || null,
+            expires_at: process.env.REVOLUT_TOKEN_EXPIRES || null
         };
-        this.tokenFile = path.join(process.cwd(), '.revolut-tokens.json');
-        this.loadTokens();
-    }
-
-    loadTokens() {
-        try {
-            if (fs.existsSync(this.tokenFile)) {
-                const data = fs.readFileSync(this.tokenFile, 'utf8');
-                this.tokens = JSON.parse(data);
-                console.log('Tokens loaded from file');
-            }
-        } catch (error) {
-            console.error('Error loading tokens:', error);
-            // Initialize with empty tokens if file read fails
-            this.tokens = {
-                access_token: null,
-                refresh_token: null,
-                expires_at: null
-            };
-        }
-    }
-
-    saveTokens() {
-        try {
-            fs.writeFileSync(this.tokenFile, JSON.stringify(this.tokens, null, 2));
-            console.log('Tokens saved to file');
-        } catch (error) {
-            console.error('Error saving tokens:', error);
-        }
     }
 
     setTokens(accessToken, refreshToken, expiresIn) {
@@ -47,7 +16,13 @@ class TokenManager {
             refresh_token: refreshToken,
             expires_at: Date.now() + (expiresIn * 1000)
         };
-        this.saveTokens();
+        
+        // Log tokens for manual addition to Vercel environment
+        console.log('New tokens generated:', {
+            REVOLUT_ACCESS_TOKEN: accessToken,
+            REVOLUT_REFRESH_TOKEN: refreshToken,
+            REVOLUT_TOKEN_EXPIRES: this.tokens.expires_at
+        });
     }
 
     async getValidToken() {
