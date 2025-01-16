@@ -15,6 +15,7 @@ module.exports = {
         ];
     },
     env: {
-        REVOLUT_REDIRECT_URI: 'https://api.diamondskymarketing.nl/api/revolut/oauth/callback'
+        REVOLUT_REDIRECT_URI: 'https://api.diamondskymarketing.nl/api/revolut/oauth/callback',
+        REVOLUT_KEY_SIZE: 2048
     }
 }; 

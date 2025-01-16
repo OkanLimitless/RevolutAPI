@@ -9,7 +9,7 @@ if (!fs.existsSync('certs')) {
 // Generate private key and certificate with shorter key length (1024 bits)
 const opensslCommands = [
     // Generate private key with shorter length
-    `openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:1024 -out certs/private.key`,
+    `openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out certs/private.key`,
     
     // Generate certificate signing request
     `openssl req -new -key certs/private.key -out certs/request.csr -subj "/emailAddress=info@diamondskymarketing.nl/C=NL/ST=Gelderland/L=Varsseveld/O=Diamond Sky Marketing/OU=Development/CN=api.diamondskymarketing.nl"`,
