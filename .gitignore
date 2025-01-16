@@ -25,12 +25,21 @@ yarn-error.log*
 # local env files
 .env*.local
 .env
+.env*
+!.env.example
 
 # certificates
 /certs
 *.key
 *.cer
 *.pem
+# Ensure no certificates or keys are committed
+**/certs/
+**/*.key
+**/*.cer
+**/*.pem
+**/*.pkcs8
+**/*.csr
 
 # tokens
 .revolut-tokens.json
