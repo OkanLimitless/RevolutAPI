@@ -54,10 +54,10 @@ class TokenManager {
             formData.append('client_assertion_type', 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer');
             formData.append('client_assertion', token);
 
-            console.log('Refresh token request:', {
-                grant_type: 'refresh_token',
+            console.log('Token refresh attempt:', {
+                refresh_token_preview: this.tokens.refresh_token?.substring(0, 10) + '...',
                 client_id: process.env.REVOLUT_CLIENT_ID,
-                refresh_token: this.tokens.refresh_token?.substring(0, 10) + '...',
+                jwt_preview: token.substring(0, 50) + '...'
             });
 
             const response = await axios.post(
@@ -71,6 +71,7 @@ class TokenManager {
             );
 
             console.log('Token refresh response:', {
+                success: true,
                 has_access_token: !!response.data.access_token,
                 has_refresh_token: !!response.data.refresh_token,
                 expires_in: response.data.expires_in
@@ -78,13 +79,18 @@ class TokenManager {
 
             this.setTokens(
                 response.data.access_token,
-                response.data.refresh_token || this.tokens.refresh_token, // Keep old refresh token if new one not provided
+                response.data.refresh_token || this.tokens.refresh_token,
                 response.data.expires_in
             );
 
             return this.tokens.access_token;
         } catch (error) {
-            console.error('Token refresh failed:', error.response?.data || error);
+            console.error('Token refresh failed:', {
+                error: error.response?.data || error,
+                status: error.response?.status,
+                data: error.response?.data,
+                refresh_token_exists: !!this.tokens.refresh_token
+            });
             throw error;
         }
     }
