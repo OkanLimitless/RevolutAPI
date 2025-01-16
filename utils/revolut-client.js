@@ -5,13 +5,12 @@ export async function createRevolutClient() {
     const token = await tokenManager.getValidToken();
     
     const client = axios.create({
-        baseURL: 'https://b2b.revolut.com/api/2.0',
+        baseURL: 'https://b2b.revolut.com/api/1.0',
         headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'User-Agent': 'Diamond Sky Marketing API',
-            'Api-Version': '2023-10-15'
+            'User-Agent': 'Diamond Sky Marketing API'
         }
     });
 

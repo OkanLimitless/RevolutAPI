@@ -8,7 +8,7 @@ export function generateJWT() {
         const payload = {
             iss: 'api.diamondskymarketing.nl',
             sub: process.env.REVOLUT_CLIENT_ID,
-            aud: ['https://revolut.com', 'https://b2b.revolut.com/api/2.0'],
+            aud: ['https://revolut.com', 'https://b2b.revolut.com/api/1.0'],
             exp: now + 60 * 5,
             iat: now,
             jti,

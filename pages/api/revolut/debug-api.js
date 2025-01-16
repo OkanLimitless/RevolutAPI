@@ -16,7 +16,7 @@ export default async function handler(req, res) {
         };
 
         try {
-            const accountsResponse = await client.get('/accounts');
+            const accountsResponse = await client.get('/user');
             tests.accounts = {
                 success: true,
                 count: accountsResponse.data.length
@@ -29,7 +29,7 @@ export default async function handler(req, res) {
         }
 
         try {
-            const cardsResponse = await client.get('/cards');
+            const cardsResponse = await client.get('/issuing/cards');
             tests.cards = {
                 success: true,
                 count: cardsResponse.data.length
@@ -42,7 +42,7 @@ export default async function handler(req, res) {
         }
 
         try {
-            const profilesResponse = await client.get('/profiles');
+            const profilesResponse = await client.get('/counterparties');
             tests.profiles = {
                 success: true,
                 data: profilesResponse.data
