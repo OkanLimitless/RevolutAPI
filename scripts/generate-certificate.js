@@ -53,7 +53,7 @@ const executeCommands = async (commands) => {
 
     // Create .env content
     const envContent = `# Revolut API Credentials
-REVOLUT_CLIENT_ID=${process.env.REVOLUT_CLIENT_ID || 'mbn9UkAO8wxyjh9DSPlBsJtRy134KCPRLEUOIOgVT84'}
+REVOLUT_CLIENT_ID=${process.env.REVOLUT_CLIENT_ID || 'vdt7F3GzdffAZ_EWW9VFjZtLC-qOttZpcVgB-RZISiE'}
 REVOLUT_ISSUER=api.diamondskymarketing.nl
 REVOLUT_API_ENVIRONMENT=production
 REVOLUT_REDIRECT_URI=https://api.diamondskymarketing.nl/api/revolut/oauth/callback
