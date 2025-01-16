@@ -25,7 +25,7 @@ export default async function handler(req, res) {
         });
 
         // Create a virtual card with updated payload
-        const cardResponse = await client.post('/card', {
+        const cardResponse = await client.post('/cards/create', {
             type: 'VIRTUAL',
             currency: 'EUR',
             name: name,
