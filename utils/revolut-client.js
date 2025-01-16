@@ -2,39 +2,29 @@ import axios from 'axios';
 import tokenManager from './revolut-token-manager';
 
 export async function createRevolutClient() {
-    try {
-        const token = await tokenManager.getValidToken();
-        
-        const client = axios.create({
-            baseURL: 'https://b2b.revolut.com/api/1.0',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-                'Accept': 'application/json'
-            }
-        });
+    const token = await tokenManager.getValidToken();
+    
+    const client = axios.create({
+        baseURL: 'https://b2b.revolut.com/api/1.0',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }
+    });
 
-        // Add response interceptor for token refresh
-        client.interceptors.response.use(
-            response => response,
-            async error => {
-                if (error.response?.status === 401) {
-                    try {
-                        const newToken = await tokenManager.refreshToken();
-                        error.config.headers['Authorization'] = `Bearer ${newToken}`;
-                        return axios(error.config);
-                    } catch (refreshError) {
-                        console.error('Token refresh failed:', refreshError);
-                        throw refreshError;
-                    }
-                }
-                throw error;
-            }
-        );
+    // Add response interceptor for debugging
+    client.interceptors.response.use(
+        response => response,
+        error => {
+            console.error('API Request failed:', {
+                url: error.config?.url,
+                method: error.config?.method,
+                status: error.response?.status,
+                data: error.response?.data
+            });
+            return Promise.reject(error);
+        }
+    );
 
-        return client;
-    } catch (error) {
-        console.error('Client creation error:', error);
-        throw error;
-    }
+    return client;
 } 
