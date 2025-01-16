@@ -47,18 +47,22 @@ class TokenManager {
     async refreshToken() {
         try {
             const token = generateJWT();
+            
+            console.log('Token refresh attempt:', {
+                refresh_token_exists: !!this.tokens.refresh_token,
+                refresh_token_preview: this.tokens.refresh_token?.substring(0, 20) + '...',
+                jwt_preview: token.substring(0, 50) + '...',
+                expires_at: this.tokens.expires_at,
+                current_time: Date.now(),
+                is_expired: Date.now() >= this.tokens.expires_at
+            });
+
             const formData = new URLSearchParams();
             formData.append('grant_type', 'refresh_token');
             formData.append('refresh_token', this.tokens.refresh_token);
             formData.append('client_id', process.env.REVOLUT_CLIENT_ID);
             formData.append('client_assertion_type', 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer');
             formData.append('client_assertion', token);
-
-            console.log('Token refresh attempt:', {
-                refresh_token_preview: this.tokens.refresh_token?.substring(0, 10) + '...',
-                client_id: process.env.REVOLUT_CLIENT_ID,
-                jwt_preview: token.substring(0, 50) + '...'
-            });
 
             const response = await axios.post(
                 'https://b2b.revolut.com/api/1.0/auth/token',
@@ -89,7 +93,9 @@ class TokenManager {
                 error: error.response?.data || error,
                 status: error.response?.status,
                 data: error.response?.data,
-                refresh_token_exists: !!this.tokens.refresh_token
+                refresh_token_exists: !!this.tokens.refresh_token,
+                expires_at: this.tokens.expires_at,
+                current_time: Date.now()
             });
             throw error;
         }
