@@ -11,7 +11,8 @@ export function generateJWT() {
             aud: ['https://revolut.com', 'https://b2b.revolut.com/api/1.0'],
             exp: now + 60 * 5,
             iat: now,
-            jti
+            jti,
+            scope: 'read write cards:write'
         };
 
         const privateKey = process.env.REVOLUT_PRIVATE_KEY

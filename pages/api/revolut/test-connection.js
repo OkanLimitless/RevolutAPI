@@ -35,7 +35,11 @@ export default async function handler(req, res) {
         };
 
         // Step 4: Generate OAuth URL for authorization
-        const authUrl = `https://business.revolut.com/app-confirm?client_id=${process.env.REVOLUT_CLIENT_ID}&redirect_uri=${encodeURIComponent('https://api.diamondskymarketing.nl/api/revolut/oauth/callback')}&response_type=code&scope=read write`;
+        const authUrl = `https://business.revolut.com/app-confirm?` +
+            `client_id=${process.env.REVOLUT_CLIENT_ID}` +
+            `&redirect_uri=${encodeURIComponent(process.env.REVOLUT_REDIRECT_URI)}` +
+            `&response_type=code` +
+            `&scope=read write cards:write`;
 
         // Return all test results
         res.status(200).json({
