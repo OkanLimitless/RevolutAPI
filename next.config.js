@@ -21,6 +21,6 @@ module.exports = {
         REVOLUT_ACCESS_TOKEN: 'oa_prod_to1b_yH0FIhGqIJZP61FFIrM2DyDZZEcpumMkmRrQOc',
         REVOLUT_REFRESH_TOKEN: 'oa_prod_h6mr-yD-gWWZyphmUQ5Ksonjs0TfQrnQdn7J9ZadSZ0',
         REVOLUT_TOKEN_EXPIRES: '1737054779447',
-        REVOLUT_SCOPES: 'account:read account:write cards:read cards:write'
+        REVOLUT_SCOPES: 'READ,WRITE'
     }
 }; 
