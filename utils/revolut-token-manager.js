@@ -11,17 +11,21 @@ class TokenManager {
     }
 
     setTokens(accessToken, refreshToken, expiresIn) {
+        const now = Date.now();
         this.tokens = {
             access_token: accessToken,
             refresh_token: refreshToken,
-            expires_at: Date.now() + (expiresIn * 1000)
+            expires_at: now + (expiresIn * 1000)
         };
         
         // Log tokens for manual addition to Vercel environment
         console.log('New tokens generated:', {
             REVOLUT_ACCESS_TOKEN: accessToken,
             REVOLUT_REFRESH_TOKEN: refreshToken,
-            REVOLUT_TOKEN_EXPIRES: this.tokens.expires_at
+            REVOLUT_TOKEN_EXPIRES: this.tokens.expires_at,
+            expires_in_seconds: expiresIn,
+            current_time: now,
+            expiry_time: new Date(this.tokens.expires_at).toISOString()
         });
     }
 
