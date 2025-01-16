@@ -58,6 +58,11 @@ REVOLUT_ISSUER=api.diamondskymarketing.nl
 REVOLUT_API_ENVIRONMENT=production
 REVOLUT_REDIRECT_URI=https://api.diamondskymarketing.nl/api/revolut/oauth/callback
 
+# Token configuration
+REVOLUT_ACCESS_TOKEN=${process.env.REVOLUT_ACCESS_TOKEN || ''}
+REVOLUT_REFRESH_TOKEN=${process.env.REVOLUT_REFRESH_TOKEN || ''}
+REVOLUT_TOKEN_EXPIRES=${process.env.REVOLUT_TOKEN_EXPIRES || ''}
+
 # Certificate contents
 REVOLUT_PRIVATE_KEY='${formattedPrivateKey}'
 REVOLUT_PUBLIC_CERT='${formattedPublicCert}'
