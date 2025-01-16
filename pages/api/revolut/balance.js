@@ -7,36 +7,30 @@ export default async function handler(req, res) {
 
     try {
         const client = await createRevolutClient();
-
+        
         // Get accounts first
         const accountsResponse = await client.get('/accounts');
-        
-        // Get balances for each account
-        const balances = await Promise.all(
-            accountsResponse.data.map(async (account) => {
+        const accounts = accountsResponse.data;
+
+        // Fetch balance for each account
+        const accountsWithBalance = await Promise.all(
+            accounts.map(async (account) => {
                 try {
-                    // Get detailed balance for each account
                     const balanceResponse = await client.get(`/accounts/${account.id}/balance`);
-                    
                     return {
                         accountId: account.id,
-                        name: account.name,
+                        name: account.name || 'Main',
                         currency: account.currency,
                         balance: balanceResponse.data.amount,
-                        available: balanceResponse.data.available,
-                        reserved: balanceResponse.data.reserved,
-                        type: account.type,
-                        state: account.state,
-                        created_at: account.created_at,
-                        updated_at: account.updated_at
+                        available: balanceResponse.data.available
                     };
                 } catch (error) {
-                    console.error(`Error fetching balance for account ${account.id}:`, error);
+                    console.error(`Balance fetch error for account ${account.id}:`, error.response?.data || error.message);
                     return {
                         accountId: account.id,
-                        name: account.name,
+                        name: account.name || 'Main',
                         currency: account.currency,
-                        error: 'Failed to fetch balance'
+                        error: error.response?.data?.message || 'Failed to fetch balance'
                     };
                 }
             })
@@ -45,15 +39,15 @@ export default async function handler(req, res) {
         res.status(200).json({
             status: 'success',
             timestamp: new Date().toISOString(),
-            accounts: balances
+            accounts: accountsWithBalance
         });
     } catch (error) {
-        console.error('Balance check error:', error.response?.data || error);
-        res.status(error.response?.status || 500).json({
+        console.error('Balance fetch error:', error.response?.data || error);
+        res.status(500).json({
             status: 'error',
-            message: error.response?.data?.message || 'Failed to fetch balances',
+            message: 'Failed to fetch balances',
             timestamp: new Date().toISOString(),
-            error: error.response?.data || error.message
+            error: error.response?.data?.message || error.message
         });
     }
 } 
