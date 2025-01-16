@@ -16,7 +16,7 @@ export default async function handler(req, res) {
         };
 
         try {
-            const accountsResponse = await client.get('/user');
+            const accountsResponse = await client.get('/accounts');
             tests.accounts = {
                 success: true,
                 count: accountsResponse.data.length
@@ -29,7 +29,7 @@ export default async function handler(req, res) {
         }
 
         try {
-            const cardsResponse = await client.get('/issuing/cards');
+            const cardsResponse = await client.get('/corporate-cards');
             tests.cards = {
                 success: true,
                 count: cardsResponse.data.length
