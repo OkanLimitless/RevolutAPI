@@ -39,7 +39,7 @@ export default async function handler(req, res) {
             `client_id=${process.env.REVOLUT_CLIENT_ID}` +
             `&redirect_uri=${encodeURIComponent(process.env.REVOLUT_REDIRECT_URI)}` +
             `&response_type=code` +
-            `&scope=read write cards:write cards:read`;
+            `&scope=account:read account:write cards:read cards:write`;
 
         const isExpired = tokenState.expires_at ? Date.now() >= tokenState.expires_at : true;
 
