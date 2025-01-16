@@ -41,6 +41,8 @@ export default async function handler(req, res) {
             `&response_type=code` +
             `&scope=read write cards:write cards:read`;
 
+        const isExpired = tokenState.expires_at ? Date.now() >= tokenState.expires_at : true;
+
         // Return all test results
         res.status(200).json({
             status: 'success',
@@ -54,8 +56,8 @@ export default async function handler(req, res) {
                 },
                 token_manager: tokenState
             },
-            auth_required: !tokenState.has_access_token,
-            auth_url: !tokenState.has_access_token ? authUrl : null,
+            auth_required: !tokenState.has_access_token || isExpired,
+            auth_url: (!tokenState.has_access_token || isExpired) ? authUrl : null,
             next_steps: !tokenState.has_access_token ? [
                 "1. Visit the auth_url in your browser",
                 "2. Authorize the application in Revolut",
