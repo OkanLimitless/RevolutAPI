@@ -12,7 +12,7 @@ export function generateJWT() {
             exp: now + 60 * 5,
             iat: now,
             jti,
-            scope: 'read write cards:write cards:read'
+            scope: process.env.REVOLUT_SCOPES
         };
 
         const privateKey = process.env.REVOLUT_PRIVATE_KEY
