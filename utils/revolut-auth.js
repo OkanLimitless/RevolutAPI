@@ -8,11 +8,10 @@ export function generateJWT() {
         const payload = {
             iss: 'api.diamondskymarketing.nl',
             sub: process.env.REVOLUT_CLIENT_ID,
-            aud: ['https://revolut.com'],
+            aud: 'https://b2b.revolut.com/api/1.0',
             exp: now + 60 * 5,
             iat: now,
-            jti,
-            scope: 'read write'
+            jti
         };
 
         const privateKey = process.env.REVOLUT_PRIVATE_KEY
