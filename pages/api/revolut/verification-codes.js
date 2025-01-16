@@ -1,0 +1,61 @@
+import { createRevolutClient } from '../../../utils/revolut-client';
+
+export default async function handler(req, res) {
+    if (req.method !== 'GET') {
+        return res.status(405).json({ message: 'Method not allowed' });
+    }
+
+    try {
+        const client = await createRevolutClient();
+        
+        // Get transactions from the last 7 days (verification codes are usually recent)
+        const from = new Date();
+        from.setDate(from.getDate() - 7);
+        
+        const params = {
+            from: from.toISOString().split('T')[0],
+            to: new Date().toISOString().split('T')[0],
+            count: 100  // Increased to catch more potential verification transactions
+        };
+
+        const response = await client.get('/transactions', { params });
+        
+        // Filter and format Google Ads verification transactions
+        const verificationCodes = response.data
+            .filter(tx => 
+                tx.merchant?.name?.toLowerCase().includes('google') &&
+                tx.type === 'card_payment' &&
+                // Include all states to see what happens with verification charges
+                ['completed', 'declined', 'reverted', 'pending'].includes(tx.state)
+            )
+            .map(tx => ({
+                code: tx.merchant.name.replace('Google', '').trim(), // Extract verification code
+                amount: tx.amount,
+                currency: tx.currency,
+                state: tx.state,
+                created_at: tx.created_at,
+                completed_at: tx.completed_at || null
+            }));
+
+        res.status(200).json({
+            status: 'success',
+            timestamp: new Date().toISOString(),
+            count: verificationCodes.length,
+            verificationCodes
+        });
+
+    } catch (error) {
+        console.error('Verification codes fetch error:', {
+            error: error.response?.data || error,
+            status: error.response?.status,
+            message: error.message
+        });
+        
+        res.status(500).json({
+            status: 'error',
+            message: 'Failed to fetch verification codes',
+            timestamp: new Date().toISOString(),
+            error: error.response?.data?.message || error.message
+        });
+    }
+} 
