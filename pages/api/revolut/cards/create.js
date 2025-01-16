@@ -25,14 +25,14 @@ export default async function handler(req, res) {
         });
 
         // Create a virtual card with updated payload
-        const cardResponse = await client.post('/cards/create', {
+        const cardResponse = await client.post('/issuing/cards/create', {
             type: 'VIRTUAL',
             currency: 'EUR',
             name: name,
-            spending_limit: {
-                amount: spendingLimit * 100,
+            spend_limit: {
+                value: spendingLimit * 100,
                 currency: 'EUR',
-                period: 'MONTHLY'
+                frequency: 'MONTHLY'
             }
         });
 
