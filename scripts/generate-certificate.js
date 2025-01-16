@@ -57,7 +57,7 @@ REVOLUT_CLIENT_ID=${process.env.REVOLUT_CLIENT_ID || 'vdt7F3GzdffAZ_EWW9VFjZtLC-
 REVOLUT_ISSUER=api.diamondskymarketing.nl
 REVOLUT_API_ENVIRONMENT=production
 REVOLUT_REDIRECT_URI=https://api.diamondskymarketing.nl/api/revolut/oauth/callback
-REVOLUT_SCOPES=read write cards:write cards:read
+REVOLUT_SCOPES=account:read account:write cards:read cards:write
 
 # Token configuration
 REVOLUT_ACCESS_TOKEN=${process.env.REVOLUT_ACCESS_TOKEN || ''}
