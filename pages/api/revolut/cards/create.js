@@ -25,16 +25,18 @@ export default async function handler(req, res) {
         });
 
         // Create a virtual card with updated payload
-        const cardResponse = await client.post('/issuing/cards', {
-            type: 'VIRTUAL',
-            profile: 'DEFAULT',
+        const cardResponse = await client.post('/cards', {
+            card_design_type: 'VIRTUAL',
+            card_brand: 'VISA',
+            profile_id: 'DEFAULT',
+            label: name,
             currency: 'EUR',
-            card_name: name,
-            spending_limits: [{
-                amount: spendingLimit * 100,
-                currency: 'EUR',
-                frequency: 'MONTHLY'
-            }]
+            spend_controls: {
+                monthly_limit: {
+                    value: spendingLimit * 100,
+                    currency: 'EUR'
+                }
+            }
         });
 
         res.status(200).json({
