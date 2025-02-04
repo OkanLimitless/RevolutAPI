@@ -15,8 +15,7 @@ export default async function handler(req, res) {
 
         // Only keep EUR and USD accounts
         const filteredAccounts = accounts.filter(account => 
-            (account.currency === 'EUR' || account.currency === 'USD') &&
-            account.balance > 0
+            (account.currency === 'EUR' || account.currency === 'USD')
         );
 
         // Fetch balance for each account
@@ -27,9 +26,9 @@ export default async function handler(req, res) {
                     const balanceResponse = await client.get(`/accounts/${account.id}`);
                     console.log(`Balance for account ${account.id}:`, balanceResponse.data);
 
-                    // Convert cents to whole numbers
-                    const balance = balanceResponse.data.balance / 100;
-                    const available = balanceResponse.data.balance / 100;
+                    // Get raw balance value
+                    const balance = parseFloat(balanceResponse.data.balance);
+                    const available = parseFloat(balanceResponse.data.balance);
 
                     return {
                         id: account.id,
@@ -39,7 +38,9 @@ export default async function handler(req, res) {
                         balance: balance,
                         available: available,
                         state: account.state,
-                        public: account.public
+                        public: account.public,
+                        // Add monthly goal
+                        monthlyGoal: account.currency === 'EUR' ? 5000 : 500
                     };
                 } catch (error) {
                     console.error(`Balance error for account ${account.id}:`, error);

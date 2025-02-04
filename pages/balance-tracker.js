@@ -70,15 +70,26 @@ export default function BalanceTracker() {
                             <>
                                 <div className={styles.balanceAmount}>
                                     {account.currency === 'EUR' ? '€' : '$'}
-                                    {(account.balance || 0).toLocaleString('nl-NL', {
+                                    {((account.balance || 0) / 100).toLocaleString('nl-NL', {
                                         minimumFractionDigits: 2,
                                         maximumFractionDigits: 2
                                     })}
                                 </div>
                                 <div className={styles.motivationalText}>
-                                    Keep pushing! Next goal: 
+                                    February Goal: 
                                     {account.currency === 'EUR' ? '€' : '$'}
-                                    {Math.ceil((account.balance + 1000) / 1000) * 1000}
+                                    {account.monthlyGoal.toLocaleString('nl-NL')}
+                                    <div className={styles.progressBar}>
+                                        <div 
+                                            className={styles.progressFill}
+                                            style={{ 
+                                                width: `${Math.min(100, (account.balance / 100 / account.monthlyGoal) * 100)}%` 
+                                            }}
+                                        />
+                                    </div>
+                                    <div className={styles.progressText}>
+                                        {Math.round((account.balance / 100 / account.monthlyGoal) * 100)}% of goal
+                                    </div>
                                 </div>
                             </>
                         )}
