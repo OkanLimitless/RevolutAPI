@@ -1,7 +1,7 @@
 .container {
     min-height: 100vh;
-    padding: 2rem;
-    background: #f5f5f5;
+    padding: 3rem;
+    background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
     font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
@@ -31,7 +31,7 @@
     background: white;
     border-radius: 12px;
     padding: 1.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease;
 }
 
@@ -48,8 +48,9 @@
 .balanceAmount {
     font-size: 2.5rem;
     font-weight: bold;
-    color: #2ecc71;
+    color: #00a67e;
     margin-bottom: 0.5rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .availableAmount {
@@ -99,6 +100,22 @@
     color: #999;
     margin-top: 2rem;
     font-size: 0.9rem;
+}
+
+.motivationalText {
+    color: #666;
+    font-size: 1rem;
+    text-align: center;
+    margin: 1rem 0;
+    font-style: italic;
+}
+
+.motivationalQuote {
+    text-align: center;
+    color: #666;
+    font-size: 1.2rem;
+    margin-top: 3rem;
+    font-style: italic;
 }
 
 @media (max-width: 768px) {

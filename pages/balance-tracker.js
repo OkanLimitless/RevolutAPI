@@ -53,13 +53,15 @@ export default function BalanceTracker() {
 
     return (
         <div className={styles.container}>
-            <h1 className={styles.title}>Diamond Sky Marketing</h1>
-            <h2 className={styles.subtitle}>Balance Tracker</h2>
+            <h1 className={styles.title}>🚀 Diamond Sky Marketing</h1>
+            <h2 className={styles.subtitle}>Growth Tracker</h2>
             
             <div className={styles.balanceGrid}>
                 {balanceData?.map((account) => (
                     <div key={account.id} className={styles.balanceCard}>
-                        <h3 className={styles.accountName}>{account.name}</h3>
+                        <h3 className={styles.accountName}>
+                            {account.currency === 'EUR' ? '🇪🇺' : '🇺🇸'} {account.name}
+                        </h3>
                         {account.error ? (
                             <div className={styles.errorMessage}>
                                 Failed to load balance
@@ -67,16 +69,16 @@ export default function BalanceTracker() {
                         ) : (
                             <>
                                 <div className={styles.balanceAmount}>
-                                    €{((account.balance || 0) / 100).toLocaleString('nl-NL', {
+                                    {account.currency === 'EUR' ? '€' : '$'}
+                                    {(account.balance || 0).toLocaleString('nl-NL', {
                                         minimumFractionDigits: 2,
                                         maximumFractionDigits: 2
                                     })}
                                 </div>
-                                <div className={styles.availableAmount}>
-                                    Available: €{((account.available || 0) / 100).toLocaleString('nl-NL', {
-                                        minimumFractionDigits: 2,
-                                        maximumFractionDigits: 2
-                                    })}
+                                <div className={styles.motivationalText}>
+                                    Keep pushing! Next goal: 
+                                    {account.currency === 'EUR' ? '€' : '$'}
+                                    {Math.ceil((account.balance + 1000) / 1000) * 1000}
                                 </div>
                             </>
                         )}
@@ -86,6 +88,10 @@ export default function BalanceTracker() {
                         </div>
                     </div>
                 ))}
+            </div>
+
+            <div className={styles.motivationalQuote}>
+                "The numbers don't lie. Every euro is a step towards greater success! 💪"
             </div>
 
             <div className={styles.lastUpdated}>

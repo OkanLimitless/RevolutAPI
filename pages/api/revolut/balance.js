@@ -13,41 +13,45 @@ export default async function handler(req, res) {
         console.log('Accounts Response:', accountsResponse.data);
         const accounts = accountsResponse.data;
 
+        // Only keep EUR and USD accounts
+        const filteredAccounts = accounts.filter(account => 
+            (account.currency === 'EUR' || account.currency === 'USD') &&
+            account.balance > 0
+        );
+
         // Fetch balance for each account
         const accountsWithBalance = await Promise.all(
-            accounts.map(async (account) => {
+            filteredAccounts.map(async (account) => {
                 try {
                     // Make separate request for balance
                     const balanceResponse = await client.get(`/accounts/${account.id}`);
                     console.log(`Balance for account ${account.id}:`, balanceResponse.data);
 
+                    // Convert cents to whole numbers
+                    const balance = balanceResponse.data.balance / 100;
+                    const available = balanceResponse.data.balance / 100;
+
                     return {
                         id: account.id,
                         accountId: account.id,
                         name: account.name || 'Main Account',
                         currency: account.currency,
-                        balance: balanceResponse.data.balance,
-                        available: balanceResponse.data.balance, // Use balance as available since it's the same in v1.0 API
+                        balance: balance,
+                        available: available,
                         state: account.state,
                         public: account.public
                     };
                 } catch (error) {
                     console.error(`Balance error for account ${account.id}:`, error);
-                    return {
-                        id: account.id,
-                        accountId: account.id,
-                        name: account.name || 'Main Account',
-                        currency: account.currency,
-                        error: error.response?.data?.message || 'Failed to fetch balance',
-                        state: account.state,
-                        public: account.public
-                    };
+                    return null;
                 }
             })
         );
 
-        // Filter out accounts with errors
-        const validAccounts = accountsWithBalance.filter(account => !account.error);
+        // Filter out null results and sort by balance
+        const validAccounts = accountsWithBalance
+            .filter(account => account !== null)
+            .sort((a, b) => b.balance - a.balance);
 
         res.status(200).json({
             status: 'success',
