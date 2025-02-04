@@ -13,51 +13,29 @@ export default async function handler(req, res) {
         console.log('Accounts Response:', accountsResponse.data);
         const accounts = accountsResponse.data;
 
-        // Only keep EUR and USD accounts
-        const filteredAccounts = accounts.filter(account => 
-            (account.currency === 'EUR' || account.currency === 'USD')
-        );
-
-        // Fetch balance for each account
-        const accountsWithBalance = await Promise.all(
-            filteredAccounts.map(async (account) => {
-                try {
-                    // Make separate request for balance
-                    const balanceResponse = await client.get(`/accounts/${account.id}`);
-                    console.log(`Balance for account ${account.id}:`, balanceResponse.data);
-
-                    // Get raw balance value
-                    const balance = parseFloat(balanceResponse.data.balance);
-                    const available = parseFloat(balanceResponse.data.balance);
-
-                    return {
-                        id: account.id,
-                        accountId: account.id,
-                        name: account.name || 'Main Account',
-                        currency: account.currency,
-                        balance: balance,
-                        available: available,
-                        state: account.state,
-                        public: account.public,
-                        // Add monthly goal
-                        monthlyGoal: account.currency === 'EUR' ? 5000 : 500
-                    };
-                } catch (error) {
-                    console.error(`Balance error for account ${account.id}:`, error);
-                    return null;
+        // Calculate total balance from all accounts
+        let totalBalance = 0;
+        for (const account of accounts) {
+            try {
+                const balanceResponse = await client.get(`/accounts/${account.id}`);
+                if (account.currency === 'EUR') {
+                    totalBalance += parseFloat(balanceResponse.data.balance);
                 }
-            })
-        );
-
-        // Filter out null results and sort by balance
-        const validAccounts = accountsWithBalance
-            .filter(account => account !== null)
-            .sort((a, b) => b.balance - a.balance);
+            } catch (error) {
+                console.error(`Balance error for account ${account.id}:`, error);
+            }
+        }
 
         res.status(200).json({
             status: 'success',
             timestamp: new Date().toISOString(),
-            accounts: validAccounts
+            accounts: [{
+                id: 'total',
+                name: 'Total Balance',
+                currency: 'EUR',
+                balance: totalBalance,
+                monthlyGoal: 5000
+            }]
         });
     } catch (error) {
         console.error('Balance fetch error:', {

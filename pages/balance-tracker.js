@@ -54,55 +54,41 @@ export default function BalanceTracker() {
     return (
         <div className={styles.container}>
             <h1 className={styles.title}>🚀 Diamond Sky Marketing</h1>
-            <h2 className={styles.subtitle}>Growth Tracker</h2>
+            <h2 className={styles.subtitle}>February Goal Tracker</h2>
             
             <div className={styles.balanceGrid}>
                 {balanceData?.map((account) => (
                     <div key={account.id} className={styles.balanceCard}>
                         <h3 className={styles.accountName}>
-                            {account.currency === 'EUR' ? '🇪🇺' : '🇺🇸'} {account.name}
+                            💰 Total Balance
                         </h3>
-                        {account.error ? (
-                            <div className={styles.errorMessage}>
-                                Failed to load balance
+                        <div className={styles.balanceAmount}>
+                            €
+                            {((account.balance || 0) / 100).toLocaleString('nl-NL', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            })}
+                        </div>
+                        <div className={styles.motivationalText}>
+                            February Goal: €{account.monthlyGoal.toLocaleString('nl-NL')}
+                            <div className={styles.progressBar}>
+                                <div 
+                                    className={styles.progressFill}
+                                    style={{ 
+                                        width: `${Math.min(100, (account.balance / 100 / account.monthlyGoal) * 100)}%` 
+                                    }}
+                                />
                             </div>
-                        ) : (
-                            <>
-                                <div className={styles.balanceAmount}>
-                                    {account.currency === 'EUR' ? '€' : '$'}
-                                    {((account.balance || 0) / 100).toLocaleString('nl-NL', {
-                                        minimumFractionDigits: 2,
-                                        maximumFractionDigits: 2
-                                    })}
-                                </div>
-                                <div className={styles.motivationalText}>
-                                    February Goal: 
-                                    {account.currency === 'EUR' ? '€' : '$'}
-                                    {account.monthlyGoal.toLocaleString('nl-NL')}
-                                    <div className={styles.progressBar}>
-                                        <div 
-                                            className={styles.progressFill}
-                                            style={{ 
-                                                width: `${Math.min(100, (account.balance / 100 / account.monthlyGoal) * 100)}%` 
-                                            }}
-                                        />
-                                    </div>
-                                    <div className={styles.progressText}>
-                                        {Math.round((account.balance / 100 / account.monthlyGoal) * 100)}% of goal
-                                    </div>
-                                </div>
-                            </>
-                        )}
-                        <div className={styles.accountDetails}>
-                            <span className={styles.currency}>{account.currency}</span>
-                            <span className={styles.state}>{account.state}</span>
+                            <div className={styles.progressText}>
+                                {Math.round((account.balance / 100 / account.monthlyGoal) * 100)}% of goal
+                            </div>
                         </div>
                     </div>
                 ))}
             </div>
 
             <div className={styles.motivationalQuote}>
-                "The numbers don't lie. Every euro is a step towards greater success! 💪"
+                "February Goal: €5,000 - Let's make it happen! 💪"
             </div>
 
             <div className={styles.lastUpdated}>
