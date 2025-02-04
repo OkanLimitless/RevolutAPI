@@ -8,7 +8,7 @@ export default function BalanceTracker() {
     const [error, setError] = useState(null);
 
     const formatCurrency = (amountInCents) => {
-        return (amountInCents / 100).toLocaleString('nl-NL', { 
+        return Number(amountInCents).toLocaleString('nl-NL', { 
             minimumFractionDigits: 2, 
             maximumFractionDigits: 2 
         });
@@ -87,12 +87,12 @@ export default function BalanceTracker() {
                                 <div 
                                     className={styles.progressFill}
                                     style={{ 
-                                        width: `${Math.min(100, (account.balance / 100 / account.monthlyGoal) * 100)}%` 
+                                        width: `${Math.min(100, (account.balance / account.monthlyGoal) * 100)}%` 
                                     }}
                                 />
                             </div>
                             <div className={styles.progressText}>
-                                {Math.round((account.balance / 100 / account.monthlyGoal) * 100)}% of goal
+                                {Math.round((account.balance / account.monthlyGoal) * 100)}% of goal
                             </div>
                         </div>
                     </div>
