@@ -12,8 +12,11 @@ export default function BalanceTracker() {
                 const response = await fetch('/api/revolut/balance');
                 const data = await response.json();
                 
+                console.log('Balance API Response:', data);  // Debug log
+                
                 if (data.status === 'success') {
                     setBalanceData(data.accounts);
+                    console.log('Parsed Balance Data:', data.accounts);  // Debug log
                 } else {
                     setError(data.message || 'Failed to fetch balance');
                 }
