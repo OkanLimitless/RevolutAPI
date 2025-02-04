@@ -10,21 +10,24 @@ export default async function handler(req, res) {
         
         // Get accounts first
         const accountsResponse = await client.get('/accounts');
-        console.log('Accounts Response:', accountsResponse.data);  // Debug log
+        console.log('Accounts Response:', accountsResponse.data);
         const accounts = accountsResponse.data;
 
         // Fetch balance for each account
         const accountsWithBalance = await Promise.all(
             accounts.map(async (account) => {
                 try {
-                    // Get balance directly from account data
+                    // Make separate request for balance
+                    const balanceResponse = await client.get(`/accounts/${account.id}`);
+                    console.log(`Balance for account ${account.id}:`, balanceResponse.data);
+
                     return {
                         id: account.id,
                         accountId: account.id,
                         name: account.name || 'Main Account',
                         currency: account.currency,
-                        balance: account.balance,
-                        available: account.available,
+                        balance: balanceResponse.data.balance,
+                        available: balanceResponse.data.balance, // Use balance as available since it's the same in v1.0 API
                         state: account.state,
                         public: account.public
                     };
@@ -43,12 +46,13 @@ export default async function handler(req, res) {
             })
         );
 
-        console.log('Final accounts data:', accountsWithBalance);  // Debug log
+        // Filter out accounts with errors
+        const validAccounts = accountsWithBalance.filter(account => !account.error);
 
         res.status(200).json({
             status: 'success',
             timestamp: new Date().toISOString(),
-            accounts: accountsWithBalance
+            accounts: validAccounts
         });
     } catch (error) {
         console.error('Balance fetch error:', {

@@ -60,18 +60,26 @@ export default function BalanceTracker() {
                 {balanceData?.map((account) => (
                     <div key={account.id} className={styles.balanceCard}>
                         <h3 className={styles.accountName}>{account.name}</h3>
-                        <div className={styles.balanceAmount}>
-                            €{((account.balance || 0) / 100).toLocaleString('nl-NL', {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2
-                            })}
-                        </div>
-                        <div className={styles.availableAmount}>
-                            Available: €{((account.available || 0) / 100).toLocaleString('nl-NL', {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2
-                            })}
-                        </div>
+                        {account.error ? (
+                            <div className={styles.errorMessage}>
+                                Failed to load balance
+                            </div>
+                        ) : (
+                            <>
+                                <div className={styles.balanceAmount}>
+                                    €{((account.balance || 0) / 100).toLocaleString('nl-NL', {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    })}
+                                </div>
+                                <div className={styles.availableAmount}>
+                                    Available: €{((account.available || 0) / 100).toLocaleString('nl-NL', {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    })}
+                                </div>
+                            </>
+                        )}
                         <div className={styles.accountDetails}>
                             <span className={styles.currency}>{account.currency}</span>
                             <span className={styles.state}>{account.state}</span>
