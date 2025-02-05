@@ -7,8 +7,8 @@ export default function BalanceTracker() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const formatCurrency = (amountInCents) => {
-        return Number(amountInCents).toLocaleString('nl-NL', { 
+    const formatCurrency = (amount) => {
+        return Number(amount).toLocaleString('nl-NL', { 
             minimumFractionDigits: 2, 
             maximumFractionDigits: 2 
         });
@@ -47,6 +47,31 @@ export default function BalanceTracker() {
         return () => clearInterval(interval);
     }, []);
 
+    // Calculate overall combined balance and goal in EUR if balanceData is available.
+    const usdToEurRate = 0.92; // Convert USD to EUR using a static rate. Adjust as needed.
+
+    // Convert account balance to EUR if in USD.
+    const calculateConvertedBalance = (account) => {
+        if (account.currency && account.currency.toUpperCase() === 'USD') {
+            return account.balance * usdToEurRate;
+        }
+        return account.balance;
+    };
+
+    // Convert monthly goal to EUR if in USD.
+    const calculateConvertedGoal = (account) => {
+        if (account.monthlyGoal) {
+            if (account.currency && account.currency.toUpperCase() === 'USD') {
+                return account.monthlyGoal * usdToEurRate;
+            }
+            return account.monthlyGoal;
+        }
+        return 0;
+    };
+
+    const overallBalance = balanceData ? balanceData.reduce((sum, account) => sum + calculateConvertedBalance(account), 0) : 0;
+    const overallGoal = balanceData ? balanceData.reduce((sum, account) => sum + calculateConvertedGoal(account), 0) : 0;
+
     if (loading) {
         return (
             <div className={styles.container}>
@@ -68,6 +93,32 @@ export default function BalanceTracker() {
             <h1 className={styles.title}>🚀 Diamond Sky Marketing</h1>
             <h2 className={styles.subtitle}>February Goal Tracker</h2>
             
+            {/* Overall Combined Balance Section */}
+            <div className={styles.overallBalanceSection}>
+                <h2>Overall Balance</h2>
+                <div className={styles.overallBalance}>
+                    €{formatCurrency(overallBalance)}
+                </div>
+                {overallGoal > 0 && (
+                    <div className={styles.overallProgress}>
+                        <div className={styles.progressBar}>
+                            <div 
+                                className={styles.progressFill}
+                                style={{ width: `${Math.min(100, (overallBalance / overallGoal) * 100)}%` }} 
+                            />
+                        </div>
+                        <div className={styles.progressText}>
+                            {Math.round((overallBalance / overallGoal) * 100)}% of overall goal
+                        </div>
+                    </div>
+                )}
+                {balanceData.some(acc => acc.currency && acc.currency.toUpperCase() === 'USD') && (
+                    <div className={styles.exchangeRateNote}>
+                        Conversion rate (USD to EUR): {usdToEurRate}
+                    </div>
+                )}
+            </div>
+
             <div className={styles.balanceGrid}>
                 {balanceData?.map((account) => (
                     <div key={account.id} className={styles.balanceCard}>
