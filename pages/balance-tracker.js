@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react';
+import { Line } from 'react-chartjs-2';
+import { Chart, LineElement, PointElement, LinearScale, CategoryScale } from 'chart.js';
 import styles from '../styles/BalanceTracker.module.css';
+
+// Register required Chart.js components
+Chart.register(LineElement, PointElement, LinearScale, CategoryScale);
 
 export default function BalanceTracker() {
     const [balanceData, setBalanceData] = useState(null);
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [balanceHistory, setBalanceHistory] = useState([]);
 
     const formatCurrency = (amount) => {
         return Number(amount).toLocaleString('nl-NL', { 
@@ -72,6 +78,28 @@ export default function BalanceTracker() {
     const overallBalance = balanceData ? balanceData.reduce((sum, account) => sum + calculateConvertedBalance(account), 0) : 0;
     const overallGoal = balanceData ? balanceData.reduce((sum, account) => sum + calculateConvertedGoal(account), 0) : 0;
 
+    // New Effect: Each time balanceData updates, record the current overall balance with a timestamp.
+    useEffect(() => {
+        if (balanceData) {
+            setBalanceHistory(prevHistory => [...prevHistory, { 
+                date: new Date(), 
+                balance: overallBalance 
+            }]);
+        }
+    }, [balanceData, overallBalance]);
+
+    // Prepare data for the Line chart (balance history).
+    const chartData = {
+        labels: balanceHistory.map(point => new Date(point.date).toLocaleTimeString('nl-NL')),
+        datasets: [{
+            label: 'Overall Balance (€)',
+            data: balanceHistory.map(point => point.balance),
+            fill: false,
+            borderColor: 'blue',
+            tension: 0.1,
+        }],
+    };
+
     if (loading) {
         return (
             <div className={styles.container}>
@@ -117,6 +145,17 @@ export default function BalanceTracker() {
                         Conversion rate (USD to EUR): {usdToEurRate}
                     </div>
                 )}
+            </div>
+
+            {/* New: Balance History Graph for visualization and motivation */}
+            <div className={styles.chartContainer}>
+                <Line data={chartData} options={{
+                    responsive: true,
+                    scales: {
+                        x: { title: { display: true, text: 'Time' } },
+                        y: { title: { display: true, text: 'Balance (€)' } }
+                    }
+                }} />
             </div>
 
             <div className={styles.balanceGrid}>
